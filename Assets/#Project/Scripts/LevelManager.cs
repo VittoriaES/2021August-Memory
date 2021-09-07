@@ -5,8 +5,8 @@ using UnityEngine.Events;
 
 public class LevelManager : MonoBehaviour
 {
-    public int row = 3;
-    public int column = 4;
+    private int row;
+    private int column;
     
     public float gapRow = 1.5f;
     public float gapCol = 1.5f;
@@ -28,10 +28,13 @@ public class LevelManager : MonoBehaviour
     private Dictionary <int, Material> itemMaterial = new Dictionary <int, Material>();
 
     public UnityEvent whenPlayerWins;
+    private float timer = 0.0f;
 
     // Start is called before the first frame update
     void Start()
     {
+        row = PlayerPrefs.GetInt("row", 3);
+        column = PlayerPrefs.GetInt("column", 4);
         items = new ItemBehaviour[row * column];
         int index = 0;
 
@@ -107,6 +110,10 @@ public class LevelManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        timer += Time.deltaTime;
+        // * Debug.Log(timer);
+
+
         if (selected.Count == 2){
             if (itemMaterial[selected[0]] == itemMaterial[selected[1]]) {
                 matches.Add(selected[0]);
@@ -116,6 +123,7 @@ public class LevelManager : MonoBehaviour
                 items[selected[1]].HasBeenMatched();
 
                 if (matches.Count >= row * column) {
+                    PlayerPrefs.SetFloat("timer", timer);
                     StartCoroutine(Win());
                     
                 }
